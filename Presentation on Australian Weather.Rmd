@@ -1,0 +1,202 @@
+---
+title: "Australian Weather"
+author: "Cory Hyde"
+date: "December 20, 2018"
+output: ioslides_presentation
+---
+
+```{r}
+
+
+
+
+```
+
+
+## Background on Dataset
+
+- Content is daily observations on Australian Weather
+- 1198 Obervations
+- 20 Variables 
+
+## Library intro 
+
+```{r}
+AUSWeather = read.csv("C:/Users/student/Downloads/AUSWeather.csv")
+
+ library(ggplot2)
+ library(lattice)
+ library(caret)
+ library(glmnet)
+ library(ranger)
+
+
+```
+
+## Humidity 3 PM
+
+```{r}
+ggplot(AUSWeather) + geom_point(mapping = aes (x= Humidity3pm , y= Rainfall, color= MaxTemp))
+
+
+
+
+
+```
+
+## Humidity 9 AM
+
+```{r}
+ggplot(AUSWeather) + geom_point(mapping = aes (x= Humidity9am , y= Rainfall, color= MaxTemp))
+
+
+
+
+
+
+```
+
+## Pressure 9 AM
+
+```{r}
+ggplot(AUSWeather) + geom_point(mapping = aes (x= Pressure9am , y= Rainfall, color= MaxTemp))
+
+
+
+
+
+
+```
+
+
+## Pressure 3 PM
+
+```{r}
+ggplot(AUSWeather) + geom_point(mapping = aes (x= Pressure3pm , y= Rainfall, color= MaxTemp))
+
+
+
+
+
+
+```
+
+```
+
+
+
+
+## Missing Variables 
+ 
+```{r}
+AUSWeather$MinTemp[is.na(AUSWeather$MinTemp)] <- 0
+  AUSWeather$MaxTemp[is.na(AUSWeather$MaxTemp)] <- 0
+AUSWeather$Rainfall[is.na(AUSWeather$Rainfall)] <- 0
+AUSWeather$WindGustSpeed[is.na(AUSWeather$WindGustSpeed)] <- 0
+  AUSWeather$WindSpeed9am[is.na(AUSWeather$WindSpeed9am)] <- 0
+  AUSWeather$WindSpeed3pm[is.na(AUSWeather$WindSpeed3pm)] <- 0
+  AUSWeather$Humidity9am[is.na(AUSWeather$Humidity9am)] <- 0
+  AUSWeather$Humidity3pm[is.na(AUSWeather$Humidity3pm)] <- 0
+  AUSWeather$Pressure9am[is.na(AUSWeather$Pressure9am)] <- 0
+  AUSWeather$Pressure3pm[is.na(AUSWeather$Pressure3pm)] <- 0
+  AUSWeather$Cloud9am[is.na(AUSWeather$Cloud9am)] <- 0
+  AUSWeather$Cloud3pm[is.na(AUSWeather$Cloud3pm)] <- 0
+  AUSWeather$Temp9am[is.na(AUSWeather$Temp9am)] <- 0
+  AUSWeather$Temp3pm[is.na(AUSWeather$Temp3pm)] <- 0
+  AUSWeather$RISK_MM[is.na(AUSWeather$RISK_MM)] <- 0
+
+
+
+```
+
+## Encoding Target Variable 
+```{r}
+ AUSWeather$RainTomorrow = factor(AUSWeather$RainTomorrow,
+levels = c("No","Yes") ,
+labels = c(0, 1))
+
+
+
+```
+
+
+
+
+
+
+## Enconding Wind Directions
+
+```{r}
+AUSWeather$WindGustDir = factor(AUSWeather$WindGustDir,
+                                 
+levels = c("E", "ENE", "ESE", "N", "NE", "NNE", "NNW", "NW", "S", "SE", "SSE", "SSW", "SW", "W", "WNW", "WSW" ) ,
+                                 
+labels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16))
+
+
+
+
+
+
+
+```
+
+## Decision Tree Model 
+
+```{r}
+
+AUSWeather = read.csv("C:/Users/student/Downloads/AUSWeather.csv")
+
+ library(ggplot2)
+ library(lattice)
+ library(caret)
+ library(glmnet)
+ library(ranger)
+
+
+AUSWeather$MinTemp[is.na(AUSWeather$MinTemp)] <- 0
+  AUSWeather$MaxTemp[is.na(AUSWeather$MaxTemp)] <- 0
+AUSWeather$Rainfall[is.na(AUSWeather$Rainfall)] <- 0
+AUSWeather$WindGustSpeed[is.na(AUSWeather$WindGustSpeed)] <- 0
+  AUSWeather$WindSpeed9am[is.na(AUSWeather$WindSpeed9am)] <- 0
+  AUSWeather$WindSpeed3pm[is.na(AUSWeather$WindSpeed3pm)] <- 0
+  AUSWeather$Humidity9am[is.na(AUSWeather$Humidity9am)] <- 0
+  AUSWeather$Humidity3pm[is.na(AUSWeather$Humidity3pm)] <- 0
+  AUSWeather$Pressure9am[is.na(AUSWeather$Pressure9am)] <- 0
+  AUSWeather$Pressure3pm[is.na(AUSWeather$Pressure3pm)] <- 0
+  AUSWeather$Cloud9am[is.na(AUSWeather$Cloud9am)] <- 0
+  AUSWeather$Cloud3pm[is.na(AUSWeather$Cloud3pm)] <- 0
+  AUSWeather$Temp9am[is.na(AUSWeather$Temp9am)] <- 0
+  AUSWeather$Temp3pm[is.na(AUSWeather$Temp3pm)] <- 0
+  AUSWeather$RISK_MM[is.na(AUSWeather$RISK_MM)] <- 0
+
+
+
+
+```
+
+## Decision Tree  
+```{r}
+  DecTreeAUS <- train(
+    
+RainTomorrow~.,
+   
+data = AUSWeather, method = "rpart",
+     
+trControl = trainControl(method="cv",number=10,verboseIter = TRUE)) 
+  
+DecTreeAUS
+
+
+
+
+
+
+```
+
+## Conclusion
+-Decision Tree was the best model
+
+-Other Models that were used were RandForest and glmnet 
+
+-Decision Tree had accuracy in the high 90's others were mid 80's
